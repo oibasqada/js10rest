@@ -1,5 +1,5 @@
 const row = document.querySelector('.row');
-const select = document.querySelector('.location-sel')
+const region = document.querySelector('.location-sel')
 const input = document.querySelector('.inpt')
 const title = document.querySelector('.title')
 const subTitle = document.querySelector('.subtitle')
@@ -14,10 +14,24 @@ button.addEventListener('click',() => {
         .then(data => {
             console.log(data)
             title.innerHTML = `Base currency: ${data.base}`
-            subTitle.innerHTML = `<span>USD: ${data.rates.USD}</span>
-                                  <span>EUR: ${data.rates.EUR}</span>
-                                  <span>RUB: ${data.rates.RUB}</span>
-                                  <span>KGS: ${data.rates.KGS}</span>`
+            switch (data.base){
+                case 'USD':
+                    return subTitle.innerHTML = `<span>EUR: ${data.rates.EUR.toFixed(2)}</span>
+                                                 <span>RUB: ${data.rates.RUB.toFixed(2)}</span>
+                                                 <span>KGS: ${data.rates.KGS.toFixed(2)}</span>`
+                case 'EUR':
+                    return subTitle.innerHTML = `<span>USD: ${data.rates.USD.toFixed(2)}</span>
+                                                 <span>RUB: ${data.rates.RUB.toFixed(2)}</span>
+                                                 <span>KGS: ${data.rates.KGS.toFixed(2)}</span>`
+                case 'KGS':
+                    return subTitle.innerHTML = `<span>EUR: ${data.rates.EUR.toFixed(2)}</span>
+                                                 <span>RUB: ${data.rates.RUB.toFixed(2)}</span>
+                                                 <span>USD: ${data.rates.USD.toFixed(2)}</span>`
+                case 'RUB':
+                    return subTitle.innerHTML = `<span>EUR: ${data.rates.EUR.toFixed(2)}</span>
+                                                 <span>USD: ${data.rates.USD.toFixed(2)}</span>
+                                                 <span>KGS: ${data.rates.KGS.toFixed(2)}</span>`
+            }
         })
 })
 
@@ -49,3 +63,35 @@ fetch('https://restcountries.com/v3.1/region/europe')
                                </div>`
         })
     })
+region.addEventListener('change', () => {
+    let con = region.value
+
+    fetch(`https://restcountries.com/v3.1/region/${con}`)
+        .then(response => response.json())
+        .then(data => {
+            row.innerHTML = ''
+            data.map(country => {
+                row.innerHTML += `<div class ="col-4">
+                                <div class="box">
+                                    <div class="flag">
+                                        <img src="${country.flags.png}" alt="flag">
+                                    </div>
+                                    <h3>${country.name.common}</h3>
+                                    <div>Capital: <h4>${country.capital}</h4></div>
+                                    <div>
+                                       Languages: <h4>${Object.values(country.languages)}</h4>
+                                    </div>
+                                    <div>
+                                    Population: <h4>${country.population}</h4>
+                                    </div>
+                                    <div>
+                                    Location: <a href="${country.maps.googleMaps}" target="_blank">Let's go!</a>
+                                    </div>
+                                    <div class="div">
+                                    Area: <h4>${country.area}</h4>
+                                    </div>
+                                </div>
+                               </div>`
+            })
+        })
+})
